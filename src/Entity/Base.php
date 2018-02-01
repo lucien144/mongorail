@@ -14,7 +14,7 @@ use MongoRail\Exceptions\UnknownEntityType;
 
 class Base
 {
-	public function __construct($document = NULL)
+	public function __construct($document = NULL, $strict = TRUE)
 	{
 		if ($document === NULL) return;
 		
@@ -40,6 +40,14 @@ class Base
 				default:
 					$this->{$prop->name} = $this->setType($document->{$prop->name}, $typeHint['type'], $typeHint['isArray'] ?? FALSE);
 					break;
+			}
+		}
+		
+		if (!$strict) {
+			foreach ($document as $prop => $value) {
+				if (!isset($this->{$prop})) {
+					$this->{$prop} = $value;
+				}
 			}
 		}
 	}

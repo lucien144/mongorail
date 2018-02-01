@@ -25,6 +25,9 @@ abstract class Base
 	/** @var  Collection */
 	protected $collection;
 	
+	/** @var bool */
+	protected $strict = TRUE;
+	
 	private $filter = [];
 	private $sort = [];
 	
@@ -136,7 +139,7 @@ abstract class Base
 	public function insert($data)
 	{
 		$result = $this->collection->insertOne($data);
-		return (string)$result->getInsertedId();
+		return (string) $result->getInsertedId();
 	}
 	
 	
@@ -203,6 +206,20 @@ abstract class Base
 	
 	
 	/**
+	 * Sets the strict parameter. If strict is on, even non-declared entity props are returned.
+	 * Helpful when the entity structure is variable.
+	 *
+	 * @param $strict
+	 * @return $this
+	 */
+	public function strict($strict)
+	{
+		$this->strict = $strict;
+		return $this;
+	}
+	
+	
+	/**
 	 * @param \MongoDB\Model\BSONDocument|object|null $document
 	 * @return object|null
 	 */
@@ -210,7 +227,7 @@ abstract class Base
 	{
 		if ($document) {
 			$entityName = $this->getEntityClassName();
-			return new $entityName($document);
+			return new $entityName($document, $this->strict);
 		}
 		return NULL;
 	}
