@@ -131,6 +131,28 @@ abstract class Base
 	
 	
 	/**
+	 * Get number of random documents.
+	 * 
+	 * @param $limit
+	 * @return array
+	 */
+	public function getRand($limit)
+	{
+		$result = $this->collection->aggregate([
+			['$sample' => ['size' => $limit]],
+		]);
+		
+		$data = [];
+		if (count($result) > 0) {
+			foreach ($result as $row) {
+				$data[] = $this->documentToEntity($row);
+			}
+		}
+		return $data;
+	}
+	
+	
+	/**
 	 * Insert document.
 	 *
 	 * @param $data
