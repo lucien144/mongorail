@@ -132,13 +132,14 @@ abstract class Base
 	
 	/**
 	 * Get number of random documents.
-	 * 
+	 *
 	 * @param $limit
 	 * @return array
 	 */
 	public function getRand($limit)
 	{
 		$result = $this->collection->aggregate([
+			['$match' => $this->filter],
 			['$sample' => ['size' => $limit]],
 		]);
 		
