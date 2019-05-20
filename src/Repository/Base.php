@@ -99,7 +99,7 @@ abstract class Base
 	 * @param null $offset
 	 * @return array
 	 */
-	public function findAll($limit = NULL, $offset = NULL)
+	public function findAll($limit = NULL, $offset = NULL, $yield = FALSE)
 	{
 		$options = [
 			'sort'  => $this->sort,
@@ -110,10 +110,16 @@ abstract class Base
 		$data = [];
 		if (count($result) > 0) {
 			foreach ($result as $row) {
-				$data[] = $this->documentToEntity($row);
+				if ($yield) {
+					yield $this->documentToEntity($row);
+				} else {
+					$data[] = $this->documentToEntity($row);
+				}
 			}
 		}
-		return $data;
+		if (!$yield) {
+			return $data;
+		}
 	}
 	
 	
