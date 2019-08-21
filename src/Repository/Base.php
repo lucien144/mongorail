@@ -101,24 +101,24 @@ abstract class Base
 	 */
 	public function findAll($limit = NULL, $offset = NULL, $yield = FALSE)
 	{
-		$options = [
-			'sort'  => $this->sort,
-			'limit' => $limit,
-			'skip'  => $offset,
-		];
-		$result = $this->collection->find($this->filter, $options);
-		$data = [];
-		if (count($result) > 0) {
-			foreach ($result as $row) {
-				if ($yield) {
+		$generator = function() use ($limit, $offset) {
+			$options = [
+				'sort'  => $this->sort,
+				'limit' => $limit,
+				'skip'  => $offset,
+			];
+			$result = $this->collection->find($this->filter, $options);
+			if (count($result) > 0) {
+				foreach ($result as $row) {
 					yield $this->documentToEntity($row);
-				} else {
-					$data[] = $this->documentToEntity($row);
 				}
 			}
-		}
-		if (!$yield) {
-			return $data;
+		};
+
+		if ($yield) {
+			return $generator();
+		} else {
+			return iterator_to_array($generator());
 		}
 	}
 	
