@@ -34,8 +34,8 @@ class Connection
 		if (!self::$_instance) {
 			self::$_instance = new Connection();
 			self::$connection = new \MongoDB\Client($dsn);
-			preg_match('/^mongodb:\\/\\/.+\\/(.+)$/s', $dsn, $matches);
-			self::$database = self::$connection->selectDatabase($matches[1] ?? '');
+			preg_match('/^mongodb(\+srv)?:\\/\\/.+\\/(.*?)(\?.*)?$/s', $dsn, $matches);
+			self::$database = self::$connection->selectDatabase($matches[2] ?? '');
 		}
 		return self::$_instance;
 	}
